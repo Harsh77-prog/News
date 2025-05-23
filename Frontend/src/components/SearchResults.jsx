@@ -84,7 +84,7 @@ const SearchResults = () => {
             <button
               className="btn btn-outline-primary"
               onClick={handleNext}
-              disabled={!hasMore}
+             
             >
               Next →
             </button>
