@@ -18,7 +18,7 @@ const SearchResults = () => {
       try {
         console.log("Searching for:", query); // ✅ log to check
        const response = await fetch(
-  `https://news-p2b3.onrender.com/api/news?q=${encodeURIComponent(query)}&pageSize=12`
+  `https://news-p2b3.onrender.com/api/news?q=${encodeURIComponent(query)}&page=1&pageSize=12`
 );
 
 
