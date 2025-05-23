@@ -12,13 +12,19 @@ const SearchResults = () => {
 
   useEffect(() => {
     const fetchSearchResults = async () => {
-      if (!query) return;
+      if (!query || query.trim() === "") return;
+
       setLoading(true);
       try {
-        const response = await fetch(
-          `https://newsapi.org/v2/everything?q=${query}&apiKey=a357ea6769b74f1aab223a55091eaf91&pageSize=12`
-        );
+        console.log("Searching for:", query); // ✅ log to check
+       const response = await fetch(
+  `https://news-p2b3.onrender.com/api/news?q=${encodeURIComponent(query)}&page=1&pageSize=12`
+);
+
+
         const data = await response.json();
+        console.log("Data returned:", data); // ✅ see what's returned
+
         setArticles(data.articles || []);
       } catch (error) {
         console.error('Error fetching search results:', error);
@@ -29,11 +35,13 @@ const SearchResults = () => {
 
     fetchSearchResults();
   }, [query]);
-  
+
   return (
-    <div >
-        <br></br>
-      <h2 className="text-center mb-4">🔍 Search Results for: <strong>{query}</strong></h2>
+    <div>
+      <br />
+      <h2 className="text-center mb-4">
+        🔍 Search Results for: <strong>{query}</strong>
+      </h2>
       {loading ? (
         <p className="text-center">Loading...</p>
       ) : (
@@ -45,10 +53,10 @@ const SearchResults = () => {
                 title={article.title}
                 description={article.description}
                 imageUrl={
-                    article.urlToImage && article.urlToImage !== 'null'
-                      ? article.urlToImage
-                      : 'https://www.woodpro.com/images/drawings/web/no_image.png'
-                  }
+                  article.urlToImage && article.urlToImage !== 'null'
+                    ? article.urlToImage
+                    : 'https://www.woodpro.com/images/drawings/web/no_image.png'
+                }
                 newsUrl={article.url}
                 publishedAt={article.publishedAt}
                 author={article.author}
