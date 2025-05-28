@@ -43,8 +43,7 @@ export default class NewsComponent extends Component {
       // If your backend runs locally on 5000:
 
 const response = await fetch(
-  `https://news-p2b3.onrender.com
-/api/news?country=${this.props.country}&category=${this.props.category}&page=${page}&pageSize=12`
+  `https://news-p2b3.onrender.com/api/news?country=${this.props.country}&category=${this.props.category}&page=${page}&pageSize=12`
 );
       this.props.setProgress(30);
       const data = await response.json();

@@ -15,7 +15,7 @@ const CACHE_TIME = 5 * 60 * 1000; // 5 minutes
 
 app.get('/api/news', async (req, res) => {
   const {
-    country = 'us',
+    country = 'in',
     category = 'business',
     page = 1,
     pageSize = 12,
@@ -23,7 +23,8 @@ app.get('/api/news', async (req, res) => {
   } = req.query;
 
   const apiKey = process.env.NEWS_API_KEY;
-  const key = `${q || ''}_${country}_${category}_${page}_${pageSize}`;
+  const key = `${(q || '').toLowerCase()}_${country}_${category}_${page}_${pageSize}`;
+
   const now = Date.now();
 
   // Serve from cache if recent
