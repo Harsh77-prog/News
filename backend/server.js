@@ -15,7 +15,7 @@ const CACHE_TIME = 5 * 60 * 1000; // 5 minutes
 
 app.get('/api/news', async (req, res) => {
   const {
-    country = 'in',
+    country = 'us',
     category = 'business',
     page = 1,
     pageSize = 12,
