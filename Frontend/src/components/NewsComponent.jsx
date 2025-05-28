@@ -130,7 +130,7 @@ const response = await fetch(
   {loading ? 'Loading...' : 'Show Less'}
 </button>
             
-          </div>
+          </div >
           <TopButton/>
           <br></br>
           <div  className="bg-secondary p-5  ">
