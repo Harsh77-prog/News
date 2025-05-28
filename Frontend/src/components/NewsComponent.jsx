@@ -22,7 +22,7 @@ export default class NewsComponent extends Component {
       articles: [],
       page: 1,
       loading: true,
-      countdown: 20,
+      countdown: 30,
     };
     this.countdownInterval = null;
   }
