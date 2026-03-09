@@ -10,44 +10,11 @@ import LoadingBar from 'react-top-loading-bar';
 export default class App extends Component {
   state = {
     progress: 0,
-    headerHeight: 0,
   };
-
-  headerResizeObserver = null;
 
   setProgress = (progress) => {
     this.setState({ progress });
   };
-
-  updateHeaderHeight = () => {
-    const headerHeight = document.querySelector('.site-header')?.offsetHeight || 0;
-    this.setState((prevState) => {
-      if (prevState.headerHeight === headerHeight) {
-        return null;
-      }
-
-      document.documentElement.style.setProperty('--header-height', `${headerHeight}px`);
-      return { headerHeight };
-    });
-  };
-
-  componentDidMount() {
-    this.updateHeaderHeight();
-    window.addEventListener('resize', this.updateHeaderHeight);
-
-    const header = document.querySelector('.site-header');
-    if (header && typeof ResizeObserver !== 'undefined') {
-      this.headerResizeObserver = new ResizeObserver(() => this.updateHeaderHeight());
-      this.headerResizeObserver.observe(header);
-    }
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('resize', this.updateHeaderHeight);
-    if (this.headerResizeObserver) {
-      this.headerResizeObserver.disconnect();
-    }
-  }
 
   render() {
     return (
@@ -61,13 +28,12 @@ export default class App extends Component {
           shadow={false}
           containerStyle={{
             position: 'fixed',
-            top: `${this.state.headerHeight + 10}px`,
-            left: '12px',
-            right: '12px',
-            zIndex: 1600,
-            borderRadius: '999px',
+            top: '0',
+            left: '0',
+            right: '0',
+            zIndex: 1700,
             overflow: 'hidden',
-            background: 'rgba(139, 233, 255, 0.15)',
+            background: 'rgba(139, 233, 255, 0.2)',
           }}
           progressStyle={{
             borderRadius: '999px',
