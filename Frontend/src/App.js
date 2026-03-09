@@ -55,17 +55,23 @@ export default class App extends Component {
         <NavbarWrapper />
 
         <LoadingBar
-          className="my-loading-bar"
           height={4}
           color="#8be9ff"
           progress={this.state.progress}
-          style={{
+          shadow={false}
+          containerStyle={{
             position: 'fixed',
             top: `${this.state.headerHeight + 10}px`,
             left: '12px',
-            width: 'calc(100% - 24px)',
+            right: '12px',
             zIndex: 1600,
             borderRadius: '999px',
+            overflow: 'hidden',
+            background: 'rgba(139, 233, 255, 0.15)',
+          }}
+          progressStyle={{
+            borderRadius: '999px',
+            boxShadow: '0 0 12px rgba(139, 233, 255, 0.72)',
           }}
         />
 

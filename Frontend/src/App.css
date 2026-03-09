@@ -7,10 +7,6 @@
   padding-top: 1.15rem;
 }
 
-.my-loading-bar {
-  box-shadow: 0 0 18px rgba(139, 233, 255, 0.9);
-}
-
 .site-header {
   position: sticky;
   top: 0;
