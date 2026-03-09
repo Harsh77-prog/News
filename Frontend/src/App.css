@@ -200,9 +200,9 @@
   margin: 1rem 0;
   padding: 0.8rem 1rem;
   border-radius: 12px;
-  border: 1px solid rgba(255, 107, 152, 0.45);
-  background: rgba(255, 107, 152, 0.12);
-  color: #ffd9e7;
+  border: 1px solid rgba(139, 233, 255, 0.35);
+  background: linear-gradient(135deg, rgba(139, 233, 255, 0.14), rgba(120, 255, 214, 0.08));
+  color: #dff5ff;
   text-align: center;
 }
 
