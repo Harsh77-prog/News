@@ -1,43 +1,47 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 
 export default class News extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-          imageUrl: this.props.imageUrl,
-        };
-      }
-    
-      // Fallback to default image if the image fails to load
-      handleImageError = () => {
-        this.setState({
-          imageUrl: 'https://www.woodpro.com/images/drawings/web/no_image.png', // Fallback image URL
-        });
-      };
+  constructor(props) {
+    super(props);
+    this.state = {
+      imageUrl: this.props.imageUrl,
+    };
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.imageUrl !== this.props.imageUrl) {
+      this.setState({ imageUrl: this.props.imageUrl });
+    }
+  }
+
+  handleImageError = () => {
+    this.setState({
+      imageUrl: 'https://www.woodpro.com/images/drawings/web/no_image.png',
+    });
+  };
+
   render() {
-    let { title, description, newsUrl ,publishedAt,author} = this.props;
-    let { imageUrl } = this.state;
+    const { title, description, newsUrl, publishedAt, author, source } = this.props;
+    const { imageUrl } = this.state;
 
     return (
-      <div className="card m-2" style={{ width: '22rem', padding:'0px'}}>
-        <img
-          src={imageUrl}
-          className="card-img-top"
-          alt="news"
-          onError={this.handleImageError}
-          style={{objectFit: 'contain', height: '200px'}} // Trigger fallback if image fails to load
-        />
-        <div className="card-body">
-          <h5 className="card-title">{title}</h5>
-          <p className="card-text">{description}</p>
-          <p className="card-text text-primary">Published at: {new Date(publishedAt).toLocaleString()}</p>
-          <p className="card-text text-secondary">Author: {author ? author : 'Unknown'}</p>
-          {/* Use target="_blank" to open in a new tab */}
-          <a href={newsUrl} target="_blank" rel="noopener noreferrer" className="btn btn-sm btn-secondary">
-            Read More
+      <article className="news-card h-100">
+        <div className="news-image-wrap">
+          <img src={imageUrl} className="news-image" alt="news" onError={this.handleImageError} />
+        </div>
+        <div className="news-body">
+          <div className="news-meta">
+            <span>{source || 'Unknown Source'}</span>
+            <span>{new Date(publishedAt).toLocaleDateString('en-US')}</span>
+          </div>
+          <h3 className="news-title">{title}</h3>
+          <p className="news-desc">{description}</p>
+          <p className="news-meta">By {author ? author : 'Unknown Reporter'}</p>
+          <a href={newsUrl} target="_blank" rel="noopener noreferrer" className="btn btn-sm news-btn">
+            Read Full Story
           </a>
         </div>
-      </div>
+      </article>
     );
   }
 }

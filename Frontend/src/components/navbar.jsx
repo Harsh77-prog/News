@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
-
+import { Link, NavLink } from 'react-router-dom';
 
 export default class Navbar extends Component {
   constructor(props) {
@@ -19,76 +18,87 @@ export default class Navbar extends Component {
     const query = this.state.searchText.trim();
     if (query) {
       this.props.navigate(`/search?q=${encodeURIComponent(query)}`);
-      this.setState({ searchText: '' }); // Clear input
+      this.setState({ searchText: '' });
     }
   };
-   titlehandle=()=>{
-    document.title="Taza Khabar - ABOUT"
-   }
+
+  navClass = ({ isActive }) => `nav-link px-3 py-2 nav-pill ${isActive ? 'active' : ''}`;
+
   render() {
+    const categories = [
+      { label: 'General', path: '/' },
+      { label: 'Business', path: '/business' },
+      { label: 'Entertainment', path: '/entertainment' },
+      { label: 'Health', path: '/health' },
+      { label: 'Science', path: '/science' },
+      { label: 'Sports', path: '/sports' },
+      { label: 'Technology', path: '/technology' },
+    ];
+
     return (
       <>
-      <div className='p-0'>
-        <nav className="navbar bg-secondary navbar-expand-lg navbar-dark">
+        <div className="p-0">
+          <nav className="navbar app-navbar navbar-expand-lg navbar-dark px-lg-3">
+            <div className="container-fluid">
+              <Link className="navbar-brand brand-mark" to="/">
+                TazaKhabar<span className="brand-dot">.live</span>
+              </Link>
+              <button
+                className="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent"
+                aria-expanded="false"
+                aria-label="Toggle navigation"
+              >
+                <span className="navbar-toggler-icon"></span>
+              </button>
+
+              <div className="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+                  <li className="nav-item">
+                    <NavLink end className={this.navClass} to="/about">
+                      About
+                    </NavLink>
+                  </li>
+                </ul>
+
+                <form className="d-flex nav-search" role="search" onSubmit={this.handleSearchSubmit}>
+                  <input
+                    className="form-control me-2 nav-input"
+                    type="search"
+                    placeholder="Search headlines, topics or names"
+                    aria-label="Search"
+                    value={this.state.searchText}
+                    onChange={this.handleInputChange}
+                  />
+                  <button className="btn nav-search-btn" type="submit">
+                    Search
+                  </button>
+                </form>
+              </div>
+            </div>
+          </nav>
+        </div>
+
+        <div className="news-main categories-row">
           <div className="container-fluid">
-            <Link className="navbar-brand" to="">Taza-Khabar</Link>
-            <button
-              className="navbar-toggler"
-              type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#navbarSupportedContent"
-              aria-controls="navbarSupportedContent"
-              aria-expanded="false"
-              aria-label="Toggle navigation"
-            >
-              <span className="navbar-toggler-icon"></span>
-            </button>
-
-            <div className="collapse navbar-collapse" id="navbarSupportedContent">
-              <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-                <li className="nav-item">
-                  <Link className="nav-link active" aria-current="page" to="/About" onClick={this.titlehandle}>About</Link>
-                </li>
-                <li className="nav-item dropdown">
-                  <a className="nav-link dropdown-toggle" href="/" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Categories
-                  </a>
-                  <ul className="dropdown-menu">
-                    <li><Link className="dropdown-item" to="/business">business</Link></li>
-                    <li><Link className="dropdown-item" to="/entertainment">entertainment</Link></li>
-                    <li><hr className="dropdown-divider" /></li>
-                    <li><Link className="dropdown-item" to="/">general</Link></li>
-                    <li><Link className="dropdown-item" to="/health">health</Link></li>
-                    <li><hr className="dropdown-divider" /></li>
-                    <li><Link className="dropdown-item" to="/science">science</Link></li>
-                    <li><Link className="dropdown-item" to="/sports">sports</Link></li>
-                    <li><Link className="dropdown-item" to="/technology">technology</Link></li>
-                  </ul>
-                </li>
-             
- 
-  </ul>
-
-            
-                
-              {/* 🟢 SEARCH BAR */}
-              <form className="d-flex mt-2 mt-lg-0" role="search" onSubmit={this.handleSearchSubmit}>
-                <input
-                  className="form-control me-2"
-                  type="search"
-                  placeholder="Search"
-                  aria-label="Search"
-                  value={this.state.searchText}
-                  onChange={this.handleInputChange}
-                />
-                <button className="btn btn-outline-light" type="submit">Search</button>
-              </form>
+            <div className="categories-wrap">
+              {categories.map((category) => (
+                <NavLink
+                  end={category.path === '/'}
+                  key={category.path}
+                  className={this.navClass}
+                  to={category.path}
+                >
+                  {category.label}
+                </NavLink>
+              ))}
             </div>
           </div>
-        </nav>
-      </div>
-              
-            </>
+        </div>
+      </>
     );
   }
 }

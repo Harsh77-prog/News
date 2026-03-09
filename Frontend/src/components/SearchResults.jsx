@@ -5,25 +5,36 @@ import News from './News';
 const SearchResults = () => {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1); // new page state
-  const [hasMore, setHasMore] = useState(true); // to track if next page exists
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
 
   const location = useLocation();
   const query = new URLSearchParams(location.search).get('q');
 
   useEffect(() => {
+    setPage(1);
+  }, [query]);
+
+  useEffect(() => {
     const fetchSearchResults = async () => {
-      if (!query || query.trim() === '') return;
+      if (!query || query.trim() === '') {
+        setArticles([]);
+        setLoading(false);
+        return;
+      }
 
       setLoading(true);
+      document.title = `Search: ${query} - Taza Khabar`;
+
       try {
         const response = await fetch(
           `https://news-p2b3.onrender.com/api/news?q=${encodeURIComponent(query)}&page=${page}&pageSize=12`
         );
 
         const data = await response.json();
-        setArticles(data.articles || []);
-        setHasMore(data.articles && data.articles.length === 12); // assume 12 means more pages exist
+        const incoming = Array.isArray(data.articles) ? data.articles : [];
+        setArticles(incoming);
+        setHasMore(incoming.length === 12);
       } catch (error) {
         console.error('Error fetching search results:', error);
       } finally {
@@ -32,28 +43,31 @@ const SearchResults = () => {
     };
 
     fetchSearchResults();
-  }, [query, page]); // react to page change
+  }, [query, page]);
 
   const handleNext = () => setPage((prev) => prev + 1);
   const handlePrev = () => setPage((prev) => Math.max(1, prev - 1));
 
   return (
-    <div className="container py-4">
-      <h2 className="text-center mb-4">
-        🔍 Search Results for: <strong>{query}</strong>
-      </h2>
+    <main className="search-page routes-shell">
+      <div className="search-heading">
+        <h2>Search Results</h2>
+        <p>
+          Query: <strong>{query || 'N/A'}</strong>
+        </p>
+      </div>
 
       {loading ? (
-        <p className="text-center">Loading...</p>
+        <div className="countdown-note">Loading search results...</div>
       ) : (
         <>
-          <div className="d-flex flex-wrap justify-content-center">
+          <section className="news-grid">
             {articles.length > 0 ? (
               articles.map((article, index) => (
                 <News
-                  key={index}
-                  title={article.title}
-                  description={article.description}
+                  key={`${article.url}-${index}`}
+                  title={article.title ? article.title.slice(0, 88) : 'Untitled Story'}
+                  description={article.description ? article.description.slice(0, 140) : 'No summary available for this story.'}
                   imageUrl={
                     article.urlToImage && article.urlToImage !== 'null'
                       ? article.urlToImage
@@ -62,36 +76,25 @@ const SearchResults = () => {
                   newsUrl={article.url}
                   publishedAt={article.publishedAt}
                   author={article.author}
+                  source={article.source?.name}
                 />
               ))
             ) : (
-              <p className="text-center">No articles found.</p>
+              <div className="countdown-note">No articles found for this query.</div>
             )}
-          </div>
+          </section>
 
-          {/* Pagination Controls */}
-          <div className="d-flex justify-content-center mt-4 gap-3">
-            <button
-              className="btn btn-outline-primary"
-              onClick={handlePrev}
-              disabled={page === 1}
-            >
-              ← Previous
+          <div className="controls-wrap">
+            <button className="btn action-btn" onClick={handlePrev} disabled={page === 1}>
+              Previous
             </button>
-
-            <span className="align-self-center">Page {page}</span>
-
-            <button
-              className="btn btn-outline-primary"
-              onClick={handleNext}
-              disabled={!hasMore}
-            >
-              Next →
+            <button className="btn action-btn" onClick={handleNext} disabled={!hasMore}>
+              Next
             </button>
           </div>
         </>
       )}
-    </div>
+    </main>
   );
 };
 

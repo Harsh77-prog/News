@@ -1,18 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import '../App.css';
+
 const ScrollToTop = () => {
   const [isVisible, setIsVisible] = useState(false);
 
-  // Show button when page is scrolled down
   const toggleVisibility = () => {
-    if (window.pageYOffset > 100) {
+    if (window.pageYOffset > 180) {
       setIsVisible(true);
     } else {
       setIsVisible(false);
     }
   };
 
-  // Scroll to top smoothly
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
@@ -31,7 +30,7 @@ const ScrollToTop = () => {
     <div className="scroll-to-top">
       {isVisible && (
         <button onClick={scrollToTop} className="scroll-button">
-          ↑ Go to Top
+          Top
         </button>
       )}
     </div>

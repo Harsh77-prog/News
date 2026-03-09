@@ -11,6 +11,7 @@ export default class NewsComponent extends Component {
     country: 'us',
     category: 'business',
   };
+
   static propTypes = {
     country: Proptypes.string,
     category: Proptypes.string,
@@ -28,8 +29,13 @@ export default class NewsComponent extends Component {
   }
 
   componentDidMount() {
-    this.startCountdown(); // Start countdown on mount
+    this.startCountdown();
     this.fetchArticles();
+    document.title = `${this.props.category.toUpperCase()} - Taza Khabar`;
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.countdownInterval);
   }
 
   startCountdown = () => {
@@ -53,24 +59,27 @@ export default class NewsComponent extends Component {
       const response = await fetch(
         `https://news-p2b3.onrender.com/api/news?country=${this.props.country}&category=${this.props.category}&page=${page}&pageSize=12`
       );
-      this.props.setProgress(30);
+      this.props.setProgress(35);
       const data = await response.json();
+
       if (!Array.isArray(data.articles)) {
         console.error('Unexpected API response:', data);
         this.setState({ loading: false });
         return;
       }
-      this.props.setProgress(60);
+
+      this.props.setProgress(65);
       this.setState((prevState) => ({
         articles: reset ? data.articles : [...prevState.articles, ...data.articles],
         loading: false,
-        countdown: 0, // hide countdown once fetched
+        countdown: 0,
       }));
       clearInterval(this.countdownInterval);
       this.props.setProgress(100);
     } catch (error) {
       console.error('Error fetching news:', error);
       this.setState({ loading: false });
+      this.props.setProgress(100);
     }
   };
 
@@ -91,78 +100,56 @@ export default class NewsComponent extends Component {
   };
 
   render() {
-    const { articles, loading, countdown } = this.state;
+    const { articles, loading, countdown, page } = this.state;
     const todayDate = new Date().toLocaleDateString('en-IN', {
       day: 'numeric',
       month: 'long',
-      year: 'numeric'
+      year: 'numeric',
     });
-    document.title = `${this.props.category.toUpperCase()} - Taza Khabar`;
 
     return (
-      <>
-        {/* BANNER */}
+      <main className="news-main routes-shell">
         <Banner articles={articles} />
+        <Cloud category={this.props.category} />
 
-        {/* COUNTDOWN LOADING MESSAGE */}
         {countdown > 0 && (
-          <div
-            className="text-center bg-secondary  text-light py-3 position-relative animate__animated animate__fadeIn"
-            style={{ fontSize: '1.2rem', transition: 'all 0.3s ease' }}
-          >
-            ⏳ Please wait... Fetching the latest updates. Loading in <strong>{countdown}</strong>s
+          <div className="countdown-note">
+            Fetching verified updates. Estimated wait: <strong>{countdown}s</strong>
           </div>
         )}
 
-        {/* CLOUD */}
-        <Cloud category={this.props.category} />
+        <section className="news-grid">
+          {articles.map((article, index) => (
+            <News
+              key={`${article.url}-${index}`}
+              title={article.title ? article.title.slice(0, 88) : 'Untitled Story'}
+              description={article.description ? article.description.slice(0, 140) : 'No summary available for this story.'}
+              imageUrl={article.urlToImage || 'https://via.placeholder.com/600x400.png?text=No+Image'}
+              newsUrl={article.url}
+              publishedAt={article.publishedAt}
+              author={article.author}
+              source={article.source?.name}
+            />
+          ))}
+        </section>
 
-        {/* NEWS CARDS */}
-        <div className="my-0 p-0">
-          <div className="d-flex flex-wrap justify-content-center p-0">
-            {articles.map((article, index) => (
-              <News
-                key={index}
-                title={article.title ? article.title.slice(0, 60) : ''}
-                description={article.description ? article.description.slice(0, 90) : ''}
-                imageUrl={article.urlToImage || 'https://via.placeholder.com/300x200.png?text=No+Image'}
-                newsUrl={article.url}
-                publishedAt={article.publishedAt}
-                author={article.author}
-                source={article.source.name}
-              />
-            ))}
-          </div>
-
-          {/* LOAD BUTTONS */}
-          <div className="text-center mt-4 flex flex-center justify-center">
-            <button
-              className="btn btn-success"
-              onClick={this.handleLoadMore}
-              disabled={loading}
-            >
-              {loading ? 'Loading...' : 'Load More'}
-            </button>
-            <button
-              className="btn btn-success mx-2"
-              onClick={this.handleLoadless}
-              disabled={loading || this.state.page === 1}
-            >
-              {loading ? 'Loading...' : 'Show Less'}
-            </button>
-          </div>
-
-          <TopButton />
-
-          {/* FOOTER */}
-          <br />
-          <div className="bg-secondary p-5">
-            <p className="text-center text-light">Powered by NewsAPI.org</p>
-            <p className="text-center text-light">Taza-Khabar &copy;{todayDate}</p>
-            <p className="text-center text-light">All rights reserved</p>
-          </div>
+        <div className="controls-wrap">
+          <button className="btn action-btn" onClick={this.handleLoadless} disabled={loading || page === 1}>
+            {loading ? 'Loading...' : 'Previous Page'}
+          </button>
+          <button className="btn action-btn" onClick={this.handleLoadMore} disabled={loading}>
+            {loading ? 'Loading...' : 'Load More'}
+          </button>
         </div>
-      </>
+
+        <TopButton />
+
+        <footer className="app-footer">
+          <p>Powered by NewsAPI.org</p>
+          <p>Taza Khabar, {todayDate}</p>
+          <p>Journal-grade feed for daily readers.</p>
+        </footer>
+      </main>
     );
   }
 }
