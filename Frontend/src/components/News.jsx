@@ -1,33 +1,51 @@
 import React, { Component } from 'react';
 
+const FALLBACK_IMAGE = 'https://www.woodpro.com/images/drawings/web/no_image.png';
+
 export default class News extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      imageUrl: this.props.imageUrl,
+      imageLoaded: false,
     };
   }
 
   componentDidUpdate(prevProps) {
     if (prevProps.imageUrl !== this.props.imageUrl) {
-      this.setState({ imageUrl: this.props.imageUrl });
+      this.setState({ imageLoaded: false });
     }
   }
 
-  handleImageError = () => {
-    this.setState({
-      imageUrl: 'https://www.woodpro.com/images/drawings/web/no_image.png',
-    });
+  handleImageError = (event) => {
+    event.currentTarget.src = FALLBACK_IMAGE;
+    event.currentTarget.onerror = null;
+  };
+
+  handleImageLoad = () => {
+    if (!this.state.imageLoaded) {
+      this.setState({ imageLoaded: true });
+    }
   };
 
   render() {
-    const { title, description, newsUrl, publishedAt, author, source } = this.props;
-    const { imageUrl } = this.state;
+    const { title, description, newsUrl, publishedAt, author, source, imageUrl, isAboveFold } = this.props;
+    const { imageLoaded } = this.state;
 
     return (
       <article className="news-card h-100">
-        <div className="news-image-wrap">
-          <img src={imageUrl} className="news-image" alt="news" onError={this.handleImageError} />
+        <div className={`news-image-wrap ${imageLoaded ? 'is-loaded' : 'is-loading'}`}>
+          <img
+            src={imageUrl}
+            className="news-image"
+            alt="news"
+            loading={isAboveFold ? 'eager' : 'lazy'}
+            decoding="async"
+            fetchpriority={isAboveFold ? 'high' : 'low'}
+            width="600"
+            height="400"
+            onError={this.handleImageError}
+            onLoad={this.handleImageLoad}
+          />
         </div>
         <div className="news-body">
           <div className="news-meta">

@@ -129,6 +129,7 @@ export default class NewsComponent extends Component {
               publishedAt={article.publishedAt}
               author={article.author}
               source={article.source?.name}
+              isAboveFold={index < 2}
             />
           ))}
         </section>
